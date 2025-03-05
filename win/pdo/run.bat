@@ -1,6 +1,8 @@
 @echo off
 
 set SHELL_PATH=%~dp0
+echo "run batch %SHELL_PATH%"
+echo "run batch arg1 : %1"
 
 IF "%1"=="" (
 	echo "usage: %0 PHP_VERSION <e.g.: php-5.6| php-7.1| php-7.4>"

@@ -1,3 +1,4 @@
 cubrid-php-5-6/
 cubrid-php-7-1/
 cubrid-php-7-4/
+pdo/lib/**/pdo_cubrid.dll

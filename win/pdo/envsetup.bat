@@ -3,12 +3,11 @@
 set ISDOWNLOAD=%3
 
 set SHELL_PATH=%~dp0
-set LIB_PATH=%SHELL_PATH%lib
-set DEVEL_PACK_PATH=%SHELL_PATH%lib\devel-pack
+set LIB_PATH=%PDO_LIB%
+set DEVEL_PACK_PATH=%PDO_LIB%\devel-pack
 set SOURCE_DIR=%SHELL_PATH%
 set GIT_PATH=C:\Program Files\Git\bin\git.exe
 
-::set GIT_CLONE=git@github.com:hwany7seo/cubrid-pdo.git -b multi_build --recursive
 set GIT_CLONE=git@github.com:CUBRID/cubrid-pdo.git --recursive
 set SOURCE_DIR_PHP_56=%SOURCE_DIR%cubrid-pdo-5-6
 set SOURCE_DIR_PHP_71=%SOURCE_DIR%cubrid-pdo-7-1
@@ -17,6 +16,10 @@ set SOURCE_DIR_PHP_74=%SOURCE_DIR%cubrid-pdo-7-4
 set RESULT=true
 
 echo "ISDOWNLOAD : %ISDOWNLOAD%"
+
+if "%ISDOWNLOAD%" == "" (
+  echo "Source is not download"
+)
 
 IF "%1"=="" (
 	echo "usage: %0 PDO_VERSION <ex: php-5.6.31 | php-7.1.8 | php-7.4.2> Driver"
@@ -96,40 +99,17 @@ set PHP74_TS_X64=%LIB_PATH%\php-7.4.2-Win32-vc15-x64
 REM ===================
 
 
-REM ===================
-REM PHP 32bit env
-REM ===================
-set PHP5_TS_SRC_X86=%DEVEL_PACK_PATH%\php-devel-pack-5.6.31-Win32-VC11-x86\php-5.6.31-devel-VC11-x86\include
-set PHP5_NTS_SRC_X86=%DEVEL_PACK_PATH%\php-devel-pack-5.6.31-nts-Win32-VC11-x86\php-5.6.31-devel-VC11-x86\include
-set PHP7_TS_SRC_X86=%DEVEL_PACK_PATH%\php-devel-pack-7.1.8-Win32-VC14-x86\php-7.1.8-devel-VC14-x86\include
-set PHP7_NTS_SRC_X86=%DEVEL_PACK_PATH%\php-devel-pack-7.1.8-nts-Win32-VC14-x86\php-7.1.8-devel-VC14-x86\include
-set PHP74_TS_SRC_X86=%DEVEL_PACK_PATH%\php-devel-pack-7.4.2-Win32-vc15-x86\php-7.4.2-devel-vc15-x86\include
-set PHP74_NTS_SRC_X86=%DEVEL_PACK_PATH%\php-devel-pack-7.4.2-nts-Win32-vc15-x86\php-7.4.2-devel-vc15-x86\include
-
-
-set PHP5_NTS_X86=%LIB_PATH%\php-5.6.31-nts-Win32-VC11-x86
-set PHP5_TS_X86=%LIB_PATH%\php-5.6.31-Win32-VC11-x86
-set PHP7_NTS_X86=%LIB_PATH%\php-7.1.8-nts-Win32-VC14-x86
-set PHP7_TS_X86=%LIB_PATH%\php-7.1.8-Win32-VC14-x86
-set PHP74_NTS_X86=%LIB_PATH%\php-7.4.2-nts-Win32-vc15-x86
-set PHP74_TS_X86=%LIB_PATH%\php-7.4.2-Win32-vc15-x86
-REM ===================
-
 echo %PHP74_TS_SRC_X64%
 echo %PHP74_NTS_SRC_X64%
-echo %PHP74_TS_SRC_X86%
-echo %PHP74_NTS_SRC_X86%
 
 set PHP5_SRC=""
 set PHP7_SRC=""
 set PHPRC_TS_X64=""
-set PHPRC_TS_X86=""
 set PHPRC_NTS_X64=""
-set PHPRC_NTS_X86=""
 
 IF NOT EXIST %TARGETDIR% (
-	echo "%TARGETDIR% is missing or the other name"
-	GOTO exit
+  echo "%TARGETDIR% is missing or the other name"
+  GOTO exit
 )
 
 if EXIST "%TARGETDIR%\pdo_cubrid_version.h" set VERSION_FILE=pdo_cubrid_version.h
@@ -138,114 +118,73 @@ for /f "tokens=1,2,3 delims= " %%a IN (%TARGETDIR%\%VERSION_FILE%) DO set CUBRID
 echo "CUBRID_VERSION %CUBRID_VERSION%"
 
 IF "%PHP_MAJOR_VERSIN%"=="5" (
-REM	cd "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC"
+  REM cd "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC"
   echo "RUN VS2012 %VS110COMNTOOLS%vsvars32.bat"
-	call "%VS110COMNTOOLS%vsvars32.bat"
+  call "%VS110COMNTOOLS%vsvars32.bat"
 ) ELSE IF "%PHP_MAJOR_VERSIN%"=="7" (
-REM	cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
+  REM cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools"
   echo "RUN VS2017 %VS2017COMNTOOLS%VsDevCmd.bat"
-	call "%VS2017COMNTOOLS%VsDevCmd.bat"
+  call "%VS2017COMNTOOLS%VsDevCmd.bat"
 ) ELSE (
-	echo "1st parameter is undefined"
-	GOTO exit
+  echo "1st parameter is undefined"
+  GOTO exit
 )
 
 echo "Start build %TARGETDIR%..."
 cd %TARGETDIR%
 IF "%ISDOWNLOAD%"=="ND" (
   rmdir /s /q %slnPREFIX%__x64_Release_NTS %slnPREFIX%__x64_Release_TS
-  rmdir /s /q %slnPREFIX%__Win32_Release_NTS %slnPREFIX%__Win32_Release_TS
 )
 IF "%PHP_MAJOR_VERSIN%"=="5" (
-	set PHP7_SRC=""
+  set PHP7_SRC=""
 
-	REM ===================
-	REM PHP 64bit build
-	REM ===================
-	set PHP5_SRC=%PHP5_NTS_SRC_X64%
+  REM ===================
+  REM PHP 64bit build
+  REM ===================
+  set PHP5_SRC=%PHP5_NTS_SRC_X64%
   set PHPRC=%PHP5_NTS_X64%
-	set PHPRC_NTS_X64=%PHP5_NTS_X64%
-    MSBuild.exe %slnPREFIX%.sln /t:Rebuild /p:Configuration=Release_NTS /p:Platform=x64
+  set PHPRC_NTS_X64=%PHP5_NTS_X64%
+  MSBuild.exe %slnPREFIX%.sln /t:Rebuild /p:Configuration=Release_NTS /p:Platform=x64
 	
-	set PHP5_SRC=%PHP5_TS_SRC_X64%
+  set PHP5_SRC=%PHP5_TS_SRC_X64%
   set PHPRC=%PHP5_TS_X64%
-	set PHPRC_TS_X64=%PHP5_TS_X64%
-    MSBuild.exe %slnPREFIX%.sln /t:Rebuild /p:Configuration=Release_TS /p:Platform=x64
+  set PHPRC_TS_X64=%PHP5_TS_X64%
+  MSBuild.exe %slnPREFIX%.sln /t:Rebuild /p:Configuration=Release_TS /p:Platform=x64
 
-	REM ===================
-	REM PHP 32bit build
-	REM ===================	
-	set PHP5_SRC=%PHP5_NTS_SRC_X86%
-  set PHPRC=%PHP5_NTS_X86%
-	set PHPRC_NTS_X86=%PHP5_NTS_X86%
-    MSBuild.exe %slnPREFIX%.sln /t:Rebuild /p:Configuration=Release_NTS /p:Platform=Win32
-	
-	set PHP5_SRC=%PHP5_TS_SRC_X86%
-  set PHPRC=%PHP5_TS_X86%
-	set PHPRC_TS_X86=%PHP5_TS_X86%
-    MSBuild.exe %slnPREFIX%.sln /t:Rebuild /p:Configuration=Release_TS /p:Platform=Win32
-	
 ) ELSE IF "%PHP_MAJOR_VERSIN%"=="7" (
-	set PHP5_SRC=""
-	
-	IF "%PHP_MINOR_VERSIN%"=="1" (
-		REM ===================
-		REM PHP 64bit build
-		REM ===================
-		set PHP7_SRC=%PHP7_NTS_SRC_X64%
-    set PHPRC=%PHP7_NTS_X64%
-		set PHPRC_NTS_X64=%PHP7_NTS_X64%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
-		
-		set PHP7_SRC=%PHP7_TS_SRC_X64%
-    set PHPRC=%PHP7_TS_X64%
-		set PHPRC_TS_X64=%PHP7_TS_X64%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
+  set PHP5_SRC=""
 
-		REM ===================
-		REM PHP 32bit build
-		REM ===================	
-		set PHP7_SRC=%PHP7_NTS_SRC_X86%
-    set PHPRC=%PHP7_NTS_X86%
-		set PHPRC_NTS_X86=%PHP7_NTS_X86%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|Win32"
-		
-		set PHP7_SRC=%PHP7_TS_SRC_X86%
-    set PHPRC=%PHP7_TS_X86%
-		set PHPRC_TS_X86=%PHP7_TS_X86%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_TS|Win32"
-		
-	) ELSE IF "%PHP_MINOR_VERSIN%"=="4" (
-		REM ===================
-		REM PHP 32bit build
-		REM ===================	
-		set PHP7_SRC=%PHP74_NTS_SRC_X86%
-    set PHPRC=%PHP74_NTS_X86%
-		set PHPRC_NTS_X86=%PHP74_NTS_X86%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|Win32"
-
-		set PHP7_SRC=%PHP74_TS_SRC_X86%
-    set PHPRC=%PHP74_TS_X86%
-		set PHPRC_TS_X86=%PHP74_TS_X86%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_TS|Win32"
-    
+  IF "%PHP_MINOR_VERSIN%"=="1" (
     REM ===================
-		REM PHP 64bit build
-		REM ===================	
-		set PHP7_SRC=%PHP74_NTS_SRC_X64%
-    set PHPRC=%PHP74_NTS_X64%
-		set PHPRC_NTS_X64=%PHP74_NTS_X64%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
+    REM PHP 64bit build
+    REM ===================
+    set PHP7_SRC=%PHP7_NTS_SRC_X64%
+    set PHPRC=%PHP7_NTS_X64%
+    set PHPRC_NTS_X64=%PHP7_NTS_X64%
+    devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
+		
+    set PHP7_SRC=%PHP7_TS_SRC_X64%
+    set PHPRC=%PHP7_TS_X64%
+    set PHPRC_TS_X64=%PHP7_TS_X64%
+    devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
 
-		set PHP7_SRC=%PHP74_TS_SRC_X64%
+  ) ELSE IF "%PHP_MINOR_VERSIN%"=="4" (
+    REM ===================
+    REM PHP 64bit build
+    REM ===================	
+    set PHP7_SRC=%PHP74_NTS_SRC_X64%
+    set PHPRC=%PHP74_NTS_X64%
+    set PHPRC_NTS_X64=%PHP74_NTS_X64%
+    devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
+
+    set PHP7_SRC=%PHP74_TS_SRC_X64%
     set PHPRC=%PHP74_TS_X64%
-		set PHPRC_TS_X64=%PHP74_TS_X64%
-		devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
-	
-	) ELSE (
-		echo "check minor version"
-		@exit
-	)
+    set PHPRC_TS_X64=%PHP74_TS_X64%
+    devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
+  ) ELSE (
+    echo "check minor version"
+    @exit
+  )
 )
 
 
@@ -266,14 +205,7 @@ IF EXIST "%TARGETDIR%\%slnPREFIX%__x64_Release_NTS\%slnPREFIX%.dll" (
   set RESULT=false
   echo "PLEASE CHECK X64 NTS BUILD"
 )
-IF EXIST "%TARGETDIR%\%slnPREFIX%__Win32_Release_NTS\%slnPREFIX%.dll" ( 
-  copy /y "%TARGETDIR%\%slnPREFIX%__Win32_Release_NTS\%slnPREFIX%.dll" "%PHPRC_NTS_X86%\ext"
-  echo "X86 NTS BUILD OK %PHPRC_NTS_X86%\ext"
-  zip -j %SHELL_PATH%result\%PHP_VERSION%-WIN32-%VC_VERSION%-NTS-%CUBRID_VERSION%.zip "%TARGETDIR%\%slnPREFIX%__Win32_Release_NTS\%slnPREFIX%.dll"
-) ELSE (
-  set RESULT=false
-  echo "PLEASE CHECK X86 NTS BUILD"
-)
+
 IF EXIST "%TARGETDIR%\%slnPREFIX%__x64_Release_TS\%slnPREFIX%.dll" ( 
   copy /y "%TARGETDIR%\%slnPREFIX%__x64_Release_TS\%slnPREFIX%.dll" "%PHPRC_TS_X64%\ext"
   echo "X64 TS BUILD OK %PHPRC_TS_X64%\ext"
@@ -282,14 +214,7 @@ IF EXIST "%TARGETDIR%\%slnPREFIX%__x64_Release_TS\%slnPREFIX%.dll" (
   set RESULT=false
   echo "PLEASE CHECK X64 TS BUILD"
 )
-IF EXIST "%TARGETDIR%\%slnPREFIX%__Win32_Release_TS\%slnPREFIX%.dll" ( 
-  copy /y "%TARGETDIR%\%slnPREFIX%__Win32_Release_TS\%slnPREFIX%.dll" "%PHPRC_TS_X86%\ext"
-  echo "X86 TS BUILD OK %PHPRC_TS_X86%\ext"
-  zip -j %SHELL_PATH%result\%PHP_VERSION%-WIN32-%VC_VERSION%-TS-%CUBRID_VERSION%.zip "%TARGETDIR%\%slnPREFIX%__Win32_Release_TS\%slnPREFIX%.dll"
-) ELSE (
-  set RESULT=false
-  echo "PLEASE CHECK X86 TS BUILD"
-)
+
 echo "===================RESULT : %RESULT%=============================================="
 
 IF %RESULT%==true ( 
