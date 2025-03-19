@@ -13,6 +13,6 @@ cd ..
 
 call build.bat
 
-test.bat -p
+cd ..\..
 
-cd %SHALL_PATH%
+test.bat -p
