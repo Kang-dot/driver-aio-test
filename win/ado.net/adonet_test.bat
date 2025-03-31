@@ -3,7 +3,11 @@ set DRIVER_NAME=cubrid-adonet
 
 setlocal
 
-git clone git@github.com:CUBRID/%DRIVER_NAME%.git
+if exist "%SHELL_PATH%%DRIVER_NAME%\" (
+    echo %DRIVER_NAME% directory already exists. Skipping git clone.
+) else (
+    git clone git@github.com:CUBRID/%DRIVER_NAME%.git
+)
 
 cd .\%DRIVER_NAME%\script
 
@@ -13,6 +17,6 @@ cd ..
 
 call build.bat
 
-test.bat -p
+cd ..\..
 
-cd %SHALL_PATH%
+test.bat -p
