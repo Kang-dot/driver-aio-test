@@ -12,6 +12,15 @@ set FIRST_VERSION_FILE=%SOURCE_DIR%\VERSION
 set SECOND_VERSION_FILE=%SOURCE_DIR%\VERSION
 set MAJOR_START_DATE=2017-06-27
 
+REM set PYTHON_EXECUTE_END=6
+REM set PYTHON_EXECUTE[0]=C:\python\python26\python.exe
+REM set PYTHON_EXECUTE[1]=C:\python\python27\python.exe
+REM set PYTHON_EXECUTE[2]=C:\python\python30\python.exe
+REM set PYTHON_EXECUTE[3]=C:\python\python31\python.exe
+REM set PYTHON_EXECUTE[4]=C:\python\python32\python.exe
+REM set PYTHON_EXECUTE[5]=C:\python\python36\python.exe
+REM set /a PYTHON_COUNT=0
+
 set PYTHON_EXECUTE_END=2
 set PYTHON_EXECUTE[0]=C:\python\python27\python.exe
 set PYTHON_EXECUTE[1]=C:\python\python36\python.exe

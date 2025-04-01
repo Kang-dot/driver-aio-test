@@ -1,7 +1,8 @@
 @echo off
 
 set SHELL_PATH=%~dp0
-set LIB_PATH=%SHELL_PATH%lib
+@REM set LIB_PATH=%SHELL_PATH%lib
+set LIB_PATH=C:\source\driver_release_test\win\php\lib\
 set DEVEL_PACK_PATH=%SHELL_PATH%lib\devel-pack
 set TEST1_DIR_PHP_56=%SHELL_PATH%cubrid-php-5-6\tests\
 set TEST1_DIR_PHP_71=%SHELL_PATH%cubrid-php-7-1\tests_7\

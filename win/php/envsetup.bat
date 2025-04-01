@@ -8,8 +8,8 @@ set DEVEL_PACK_PATH=%SHELL_PATH%lib\devel-pack
 set SOURCE_DIR=%SHELL_PATH%
 set GIT_PATH=C:\Program Files\Git\bin\git.exe
 
-set GIT_CLONE=git@github.com:hwany7seo/cubrid-php.git -b 11_4_test --recursive
-::set GIT_CLONE=git@github.com:CUBRID/cubrid-php.git --recursive
+@REM set GIT_CLONE=git@github.com:hwany7seo/cubrid-php.git -b 11_4_test --recursive
+set GIT_CLONE=git@github.com:CUBRID/cubrid-php.git --recursive
 set SOURCE_DIR_PHP_56=%SOURCE_DIR%cubrid-php-5-6
 set SOURCE_DIR_PHP_71=%SOURCE_DIR%cubrid-php-7-1
 set SOURCE_DIR_PHP_74=%SOURCE_DIR%cubrid-php-7-4
@@ -172,11 +172,13 @@ IF "%PHP_MAJOR_VERSIN%"=="5" (
 		set PHP7_SRC=%PHP74_NTS_SRC_X64%
     set PHPRC=%PHP74_NTS_X64%
 		set PHPRC_NTS_X64=%PHP74_NTS_X64%
+    devenv %slnPREFIX%_7.sln /Upgrade
 		devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
 
 		set PHP7_SRC=%PHP74_TS_SRC_X64%
     set PHPRC=%PHP74_TS_X64%
 		set PHPRC_TS_X64=%PHP74_TS_X64%
+    devenv %slnPREFIX%_7.sln /Upgrade
 		devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
 	
 	) ELSE (
