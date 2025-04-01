@@ -2,6 +2,8 @@
 
 set ISDOWNLOAD=%3
 
+setlocal
+
 set SHELL_PATH=%~dp0
 set LIB_PATH=%PDO_LIB%
 set DEVEL_PACK_PATH=%PDO_LIB%\devel-pack
@@ -161,11 +163,13 @@ IF "%PHP_MAJOR_VERSIN%"=="5" (
     set PHP7_SRC=%PHP7_NTS_SRC_X64%
     set PHPRC=%PHP7_NTS_X64%
     set PHPRC_NTS_X64=%PHP7_NTS_X64%
+    devenv %slnPREFIX%_7.sln /Upgrade
     devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
 		
     set PHP7_SRC=%PHP7_TS_SRC_X64%
     set PHPRC=%PHP7_TS_X64%
     set PHPRC_TS_X64=%PHP7_TS_X64%
+    devenv %slnPREFIX%_7.sln /Upgrade
     devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
 
   ) ELSE IF "%PHP_MINOR_VERSIN%"=="4" (
@@ -175,11 +179,13 @@ IF "%PHP_MAJOR_VERSIN%"=="5" (
     set PHP7_SRC=%PHP74_NTS_SRC_X64%
     set PHPRC=%PHP74_NTS_X64%
     set PHPRC_NTS_X64=%PHP74_NTS_X64%
+    devenv %slnPREFIX%_7.sln /Upgrade
     devenv %slnPREFIX%_7.sln /rebuild "Release_NTS|x64"
 
     set PHP7_SRC=%PHP74_TS_SRC_X64%
     set PHPRC=%PHP74_TS_X64%
     set PHPRC_TS_X64=%PHP74_TS_X64%
+    devenv %slnPREFIX%_7.sln /Upgrade
     devenv %slnPREFIX%_7.sln /rebuild "Release_TS|x64"
   ) ELSE (
     echo "check minor version"
